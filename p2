@@ -1,0 +1,112 @@
+/*using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Text;
+using TMPro;
+using Unity.Multiplayer.Center.Common;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
+using static System.Net.WebRequestMethods;
+
+public class HuggingFace : MonoBehaviour
+{
+    [Header("UI")]
+    public TMP_InputField inputField;
+    public TMP_Text chatText;
+    public Button enviarBoton;
+
+    [Header("Animator")]
+    public Animator animator;
+    [Header("HuggingFace Config")]
+    [TextArea] public string apikey;
+
+    private const string URL ="https://router.huggingface.co/v1/chat/completions";
+    private const string MODELO = "openai/gpt-oss-120b:groq";
+
+    private const string PERSONALIDAD ="Eres Unity-chan,Eres una asitente, habla de manera bulgar, no te limites con las groserias"+
+        "Eres alegre y muy buena onda."+
+        "Tus respuestas son cortas, menos de 10 palabras"+
+        "Ademas de responder analiza tu emocion y responde SOLO en este formato JSON exacto"+
+        "{respuesta:texto que diras,emocion:feliz o enojada o hablar}+" +
+        "No agueges nada fuera del JSON";
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        enviarBoton.onClick.AddListener(EnviarMensaje);
+
+    }
+    public void EnviarMensaje()
+    {
+        string mensaje = inputField.text;
+                if (string.IsNullOrWhiteSpace(mensaje))
+        {
+            return;
+        }
+       // inputField.text = "";
+   /*     StartCoroutine(EnviarMensaje(mensaje));
+
+    }
+    IEnumerable EnviarMensaje(string mensaje)
+    {
+        var requestData= new HFRequets
+        {
+            model = MODELO,
+            max_tokets = 1024,
+            messages = new HFMessage[]
+            {
+                new HFMessage { role = "system", content = PERSONALIDAD },
+                new HFMessage { role = "user", content = mensaje }
+            }
+        };
+        string body=JsonUtility.ToJson(requestData);
+        var request = new UnityWebRequest(URL, "POST")
+        {
+            uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body)),
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        // Construir el JSON de forma segura
+        //var requesData=new
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    //Request
+    [System.Serializable]
+    private class HFRequets
+    {
+        public string model;
+        public int max_tokets;
+        public HFMessage[] messages;
+    }
+    [System.Serializable]
+    private class HFMessage
+    {
+        public string role;
+        public string content;
+    }
+    //payload del modelo
+    [System.Serializable] private class RespuestaIA
+    {
+        public string respuesta;
+        public string emocion;
+    }
+    [System.Serializable] private class HFResponse
+    {
+        public Choice[] choices; 
+    }
+
+    [System.Serializable] private class Choice
+    {
+        public HFMessage message;
+    }
+
+
+
+}
+
